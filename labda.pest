@@ -1,0 +1,11 @@
+WHITESPACE = _{ " " }
+COMMENT = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+paren = _{ "(" ~ expression ~ ")" }
+atom = _{ variable | paren }
+operand = _{ atom | abstraction }
+expression = _{ application | operand }
+
+variable = ${ ASCII_ALPHA+ }
+abstraction = ${ "$" ~ variable ~ "." ~ expression }
+application = !{ atom ~ operand+ }
