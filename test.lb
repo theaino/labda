@@ -1,0 +1,9 @@
+$true = $a.$b.a.
+$false = $a.$b.b.
+
+$or = $x.$y.x true (y true false).
+
+$V = $VALID.VALID.       /* A valid result */
+$IV = $INVALID.INVALID.  /* An invalid result */
+
+or true false V IV
