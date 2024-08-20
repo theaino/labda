@@ -59,3 +59,12 @@ $IV = $INVALID.INVALID.  /* An invalid result */
 or true false V IV
 ```
 
+# Plans
+
+- stdlib including [church encoding](https://en.wikipedia.org/wiki/Church_encoding)
+
+# Ideas
+
+- Compile to [de Bruijn Indexing](https://en.wikipedia.org/wiki/De_Bruijn_index)
+- Optimize stdlib-church-integers using real integers
+- Use deterministic behaviour for optimization (abstraction hash?)

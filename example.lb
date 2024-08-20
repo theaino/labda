@@ -1,8 +1,13 @@
 $v = ($valid.valid).
 $iv = ($invalid.invalid).
 
+$true = $a.$b.a.
+$false = $a.$b.b.
+
 $0 = $f.$x.x.
 $1 = $f.$x.f x.
+$2 = $f.$x.f (f x).
+$3 = $f.$x.f (f (f x)).
 
 
 /* Church encoding */
@@ -14,11 +19,27 @@ $^ = $m.$n.n m.
 $-- = $n.$f.$x.n ($g.$h.h (g f)) ($u.x) ($u.u).
 $- = $m.$n.n -- m. /* Monus */
 
-++ 1
 
-/*
 $K = $x.$y.x.
 $Y = $f.($x.f (x x))($x.f (x x)).
 
+/*
+The following won't result in endless loop:
 Y (K v)
 */
+
+
+
+/* Maybe monad */
+
+/* Enum */
+$just = $v.$a.$b.a v. /* One argument */
+$nothing = $a.$b.b.
+
+/* Bind function */
+$maybe = $f.$m.(m ($a.f a) nothing).
+
+
+$0? = $n.n (K false) true.
+
+0? (++ 1) IV V

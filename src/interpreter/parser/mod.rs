@@ -41,7 +41,7 @@ impl fmt::Display for Expr {
 struct LabdaParser;
 
 pub fn parse(input: &str) -> ParseResult<Expr> {
-    let pairs = match LabdaParser::parse(Rule::expression, input) {
+    let pairs = match LabdaParser::parse(Rule::main, input) {
         Ok(x) => Ok(x),
         Err(err) => Err(ParseError::SyntaxError(err.to_string()))
     }?;

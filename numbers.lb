@@ -1,0 +1,44 @@
+/* Combinators */
+
+$I = $x.x.
+$K = $x.$y.x.
+$Y = $f.($x.f (x x)) ($x.f (x x)).
+
+
+/* Booleans */
+
+$true = $a.$b.a.
+$false = $a.$b.b.
+
+
+/* Natural numbers */
+
+$0n = $f.$x.x.
+$1n = $f.$x.f x.
+$2n = $f.$x.f (f x).
+
+$++n = $n.$f.$x.f (n f x).
+$+n = $m.$n.n ++n m.
+$*n = $m.$n.$f.m (n f).
+$^n = $m.$n.n m.
+$--n = $n.$f.$x.n ($g.$h.h (g f)) ($u.x) ($u.u).
+$-n = $m.$n.n --n m.
+
+$0?n = $n.n (K false) true.
+
+$_/n = $f.$m.$n.(0?n (-n m n)) (f (++n (-n n m)) m).
+$/n = Y _/n.
+
+
+/* Integers */
+/*
+$pair = $x.$y.$z.z x y.
+$first = $p.p ($x.$y.x).
+$second = $p.p ($x.$y.y).
+
+$signed = $nat.pair nat 0.
+$neg = $x.pair (second x) (first x).
+$+ = $x.$y.
+*/
+
+
