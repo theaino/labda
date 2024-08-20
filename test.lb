@@ -1,9 +1,24 @@
-$true = $a.$b.a.
-$false = $a.$b.b.
+$v = ($valid.valid).
+$iv = ($invalid.invalid).
 
-$or = $x.$y.x true (y true false).
+$0 = $f.$x.x.
+$1 = $f.$x.f x.
 
-$V = $VALID.VALID.       /* A valid result */
-$IV = $INVALID.INVALID.  /* An invalid result */
 
-or true false V IV
+/* Church encoding */
+$++ = $n.$f.$x.f (n f x).
+$+ = $m.$n.n ++ m.
+$* = $m.$n.$f.m (n f).
+$^ = $m.$n.n m.
+
+$-- = $n.$f.$x.n ($g.$h.h (g f)) ($u.x) ($u.u).
+$- = $m.$n.n -- m. /* Monus */
+
+++ 1
+
+/*
+$K = $x.$y.x.
+$Y = $f.($x.f (x x))($x.f (x x)).
+
+Y (K v)
+*/

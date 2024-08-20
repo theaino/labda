@@ -11,5 +11,5 @@ fn main() {
     let expr = interpreter::parser::parse(&contents)
         .unwrap_or_else(|err| panic!("{}", err));
     let value = interpreter::interpret(expr);
-    println!("{:?}", value.unwrap());
+    println!("{}", value.unwrap());
 }

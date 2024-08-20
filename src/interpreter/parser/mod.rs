@@ -26,6 +26,16 @@ pub enum Expr {
     Variable(String)
 }
 
+impl fmt::Display for Expr {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Expr::Variable(name) => write!(f, "{}", name),
+            Expr::Abstraction(name, e) => write!(f, "${}.{}", name, e),
+            Expr::Application(e1, e2) => write!(f, "({}) ({})", e1, e2)
+        }
+    }
+}
+
 #[derive(Parser)]
 #[grammar = "labda.pest"]
 struct LabdaParser;
@@ -39,30 +49,6 @@ pub fn parse(input: &str) -> ParseResult<Expr> {
 }
 
 impl Expr {
-    pub fn beta(self, name: &str, expr: &Expr) -> Expr {
-        match self {
-            Expr::Application(e1, e2) => Expr::Application(
-                Box::from(e1.beta(name, expr)),
-                Box::from(e2.beta(name, expr)),
-            ),
-            Expr::Abstraction(n, e1) => Expr::Abstraction(
-                n.to_string(),
-                if n == name {
-                    Box::from(expr.clone())
-                } else {
-                    Box::from(e1.beta(name, expr))
-                }
-            ),
-            Expr::Variable(n) => {
-                if n == name {
-                    expr.clone()
-                } else {
-                    Expr::Variable(n.to_string())
-                }
-            }
-        }
-    }
-
     fn from(pair: Pair<Rule>) -> ParseResult<Expr> {
         match pair.as_rule() {
             Rule::variable => Ok(Expr::Variable(pair.as_str().to_string())),
