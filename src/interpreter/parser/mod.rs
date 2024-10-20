@@ -1,11 +1,12 @@
 use pest_derive::Parser;
 use pest::Parser;
 use pest::iterators::Pair;
-use std::fmt;
+use std::{fmt, fs};
 
 #[derive(Debug)]
 pub enum ParseError {
     SyntaxError(String),
+    FileError(String)
 }
 
 impl fmt::Display for ParseError {
@@ -13,6 +14,8 @@ impl fmt::Display for ParseError {
         match self {
             ParseError::SyntaxError(message) =>
                 write!(f, "Syntax error\n{}", message),
+            ParseError::FileError(path) =>
+                write!(f, "Failed to read file {}\n", path),
         }
     }
 }
@@ -48,6 +51,14 @@ pub fn parse(input: &str) -> ParseResult<Expr> {
     Expr::from(pairs.peek().unwrap())
 }
 
+pub fn parse_file(path: &str) -> ParseResult<Expr> {
+    let contents = match fs::read_to_string(path) {
+        Ok(contents) => contents,
+        _ => return Err(ParseError::FileError(path.to_string()))
+    };
+    parse(contents.as_str())
+}
+
 impl Expr {
     fn from(pair: Pair<Rule>) -> ParseResult<Expr> {
         match pair.as_rule() {
@@ -55,6 +66,7 @@ impl Expr {
             Rule::application => Expr::from_application(pair),
             Rule::abstraction => Expr::from_abstraction(pair),
             Rule::wrapper => Expr::from_wrapper(pair),
+            Rule::remote => Expr::from_remote(pair),
             rule => panic!("{:?}", rule)
         }
     }
@@ -102,6 +114,12 @@ impl Expr {
                 )),
                 Box::from(Expr::from(value)?)
         ))
+    }
+
+    fn from_remote(pair: Pair<Rule>) -> ParseResult<Expr> {
+        let mut pairs = pair.clone().into_inner();
+        let location = pairs.next().unwrap().as_str();
+        parse_file(location)
     }
 }
 

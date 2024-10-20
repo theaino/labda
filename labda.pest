@@ -1,15 +1,20 @@
 WHITESPACE = _{ " " | NEWLINE }
 COMMENT = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
 
-char = _{ !"=" ~ !"." ~ !"$" ~ !"(" ~ !")" ~ '\u{21}' .. '\u{7e}' }
+char = _{ !"@" ~ '\u{21}' .. '\u{7e}' }
+restricted_char = _{ !"=" ~ !"@" ~ !"." ~ !"$" ~ !"(" ~ !")" ~ char }
+
 
 paren = _{ "(" ~ expression ~ ")" }
 atom = _{ variable | paren }
-operand = _{ atom | abstraction | wrapper }
+operand = _{ atom | abstraction | wrapper | remote }
 expression = _{ application | operand }
 main = _{ SOI ~ expression ~ EOI }
 
-variable = ${ !"/*" ~ !"*/" ~ char+ }
+
+location = ${ char+ }
+remote = { "@" ~ location ~ "@" }
+variable = ${ restricted_char+ }
 abstraction = { "$" ~ variable ~ "." ~ expression }
 wrapper = { "$" ~ variable ~ "=" ~ expression ~ "." ~ expression }
 application = !{ atom ~ operand+ }
