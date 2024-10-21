@@ -1,3 +1,5 @@
+# LaBDA: <ins>La</ins>mbda <ins>B</ins>inded <ins>D</ins>efinition <ins>A</ins>pplicator
+
 # Syntax
 
 ## Function definition (abstraction)
