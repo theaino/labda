@@ -1,6 +1,3 @@
-$lib = @lib.lb@.
-$I = lib ($I.$K.$Y.I).
-$K = lib ($I.$K.$Y.K).
-$Y = lib ($I.$K.$Y.Y).
+@lib.lb@
 
-Y (K V)
+K V IV

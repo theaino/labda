@@ -6,8 +6,8 @@ restricted_char = _{ !"=" ~ !"@" ~ !"." ~ !"$" ~ !"(" ~ !")" ~ char }
 
 
 paren = _{ "(" ~ expression ~ ")" }
-atom = _{ variable | paren }
-operand = _{ atom | abstraction | wrapper | remote }
+atom = _{ variable | paren | remote }
+operand = _{ atom | abstraction | wrapper }
 expression = _{ application | operand }
 main = _{ SOI ~ expression ~ EOI }
 

@@ -10,6 +10,6 @@ fn main() {
     };
     let expr = interpreter::parser::parse_file(path.as_str())
         .unwrap_or_else(|err| panic!("{}", err));
-    let value = expr.reduce().reduce();
+    let value = expr.reduce();
     println!("{}", value);
 }
