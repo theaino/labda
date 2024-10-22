@@ -47,6 +47,17 @@ $varname=value.
 
 This evaluates to exactly the same as the other variable example.
 
+## Opener
+
+The following code
+```
+A (B C)
+```
+can be reduced to
+```
+A: B C
+```
+
 # Example
 
 ```
