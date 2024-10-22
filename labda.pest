@@ -2,16 +2,17 @@ WHITESPACE = _{ " " | NEWLINE }
 COMMENT = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
 
 char = _{ !"@" ~ '\u{21}' .. '\u{7e}' }
-restricted_char = _{ !"=" ~ !"@" ~ !"." ~ !"$" ~ !"(" ~ !")" ~ char }
+restricted_char = _{ !":" ~ !"=" ~ !"@" ~ !"." ~ !"$" ~ !"(" ~ !")" ~ char }
 
 
 paren = _{ "(" ~ expression ~ ")" }
 atom = _{ variable | paren | remote }
-operand = _{ atom | abstraction | wrapper }
+operand = _{ atom | opener | abstraction | wrapper }
 expression = _{ application | operand }
 main = _{ SOI ~ expression ~ EOI }
 
 
+opener = { ":" ~ expression }
 location = ${ char+ }
 remote = { "@" ~ location ~ "@" }
 variable = ${ restricted_char+ }

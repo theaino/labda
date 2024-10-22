@@ -1,5 +1,6 @@
 use parser::Expr;
 
+mod church;
 pub mod parser;
 
 impl Expr {
@@ -21,7 +22,11 @@ impl Expr {
                 if n == name {
                     expr.clone()
                 } else {
-                    Expr::Variable(n)
+                    if let Some(expr) = church::predefined(n.as_str()) {
+                        expr
+                    } else {
+                        Expr::Variable(n)
+                    }
                 }
             }
         }
@@ -44,7 +49,13 @@ impl Expr {
                     )
                 }
             },
-            v => v,
+            Expr::Variable(name) => {
+                if let Some(expr) = church::predefined(name.as_str()) {
+                    expr
+                } else {
+                    Expr::Variable(name)
+                }
+            }
         }
     }
 }
