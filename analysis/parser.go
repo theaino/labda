@@ -1,17 +1,20 @@
 package analysis
 
-import "fmt"
+import (
+	"fmt"
+	"labda/eval"
+)
 
-func Parse(tokens []Token) Expr {
+func Parse(tokens []Token) eval.Expr {
 	expr, _ := parseParen(tokens)
 	return expr
 }
 
-func parseParen(tokens []Token) (Expr, int) {
-	var currentExpr Expr
+func parseParen(tokens []Token) (eval.Expr, int) {
+	var currentExpr eval.Expr
 	for idx := 0; idx < len(tokens); idx++ {
 		token := tokens[idx]
-		var expr Expr
+		var expr eval.Expr
 		var offset int
 		switch v := token.(type) {
 		case Single:
@@ -25,20 +28,20 @@ func parseParen(tokens []Token) (Expr, int) {
 			}
 			idx += offset
 		case Word:
-			expr = Variable{string(v)}
+			expr = eval.Variable{string(v)}
 		case String:
-			expr = StringLit{string(v)}
+			expr = eval.StringLit{string(v)}
 		}
 		if currentExpr == nil {
 			currentExpr = expr
 		} else {
-			currentExpr = Application{currentExpr, expr}
+			currentExpr = eval.Application{currentExpr, expr}
 		}
 	}
 	return currentExpr, len(tokens)
 }
 
-func parseLambda(tokens []Token) (Expr, int) {
+func parseLambda(tokens []Token) (eval.Expr, int) {
 	var variable string
 	switch v := tokens[0].(type) {
 	case Word:
@@ -47,5 +50,5 @@ func parseLambda(tokens []Token) (Expr, int) {
 		panic(fmt.Sprintf("Expected Word, got %v", v))
 	}
 	expr, offset := parseParen(tokens[1:])
-	return Abstraction{variable, expr}, offset + 1
+	return eval.Abstraction{variable, expr}, offset + 1
 }

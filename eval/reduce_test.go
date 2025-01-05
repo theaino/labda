@@ -1,23 +1,22 @@
 package eval
 
 import (
-	ana "labda/analysis"
 	"testing"
 )
 
 func TestCollapse(t *testing.T) {
-	expr := ana.Application{Body: ana.Abstraction{Variable: "x", Term: ana.Variable{Name: "x"}}, Argument: ana.StringLit{Value: "Hello, World!"}}
-	want := ana.StringLit{Value: "Hello, World!"}
-	got := Collapse(expr)
+	expr := Application{Body: Abstraction{Variable: "x", Term: Variable{Name: "x"}}, Argument: StringLit{Value: "Hello, World!"}}
+	want := StringLit{Value: "Hello, World!"}
+	got := expr.Reduce()
 	if want != got {
 		t.Fatalf("Wanted: %#v, got: %#v", want, got)
 	}
 }
 
 func TestCollapseHalf(t *testing.T) {
-	expr := ana.Application{Body: ana.Application{Body: ana.Abstraction{Variable: "x", Term: ana.Variable{Name: "x"}}, Argument: ana.StringLit{Value: "1"}}, Argument: ana.Application{Body: ana.Abstraction{Variable: "x", Term: ana.Variable{Name: "x"}}, Argument: ana.StringLit{Value: "2"}}}
-	want := ana.Application{Body: ana.StringLit{Value: "1"}, Argument: ana.StringLit{Value: "2"}}
-	got := Collapse(Collapse(expr))
+	expr := Application{Body: Application{Body: Abstraction{Variable: "x", Term: Variable{Name: "x"}}, Argument: StringLit{Value: "1"}}, Argument: Application{Body: Abstraction{Variable: "x", Term: Variable{Name: "x"}}, Argument: StringLit{Value: "2"}}}
+	want := Application{Body: StringLit{Value: "1"}, Argument: StringLit{Value: "2"}}
+	got := expr.Reduce()
 	if want != got {
 		t.Fatalf("Wanted: %#v, got: %#v", want, got)
 	}

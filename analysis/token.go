@@ -11,7 +11,6 @@ type Token interface {
 type Single rune
 const (
 	Lambda Single =  '$'
-	// Dot Single = '.'
 	LParen Single = '('
 	RParen Single = ')'
 )
@@ -25,7 +24,7 @@ func (s Single) isToken() {}
 func (w Word) isToken() {}
 func (s String) isToken() {}
 
-var Seperators = []rune(" \n\r")
+var Seperators = []rune(" \n\r\t")
 var Quotes = []rune("'\"")
 
 func (s Single) String() string {
