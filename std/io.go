@@ -2,32 +2,46 @@ package std
 
 import (
 	"fmt"
+	"io"
 	"labda/eval"
 )
 
-var PutStrer = func(s eval.StringLit) Builtin {
+func PutStrer(s eval.StringLit, w io.Writer) Builtin {
 	return Builtin(func(e eval.Expr) eval.Expr {
 		fmt.Printf("%s", s.Value)
 		return e.Apply(eval.Identity)
 	})
 }
 
-var PutStr = Builtin(func(e eval.Expr) eval.Expr {
-	switch v := e.(type) {
-	case eval.StringLit:
-		return PutStrer(v)
-	default:
-		panic("Can only print string")
+func PutStr(w io.Writer) Builtin {
+	return Builtin(func(e eval.Expr) eval.Expr {
+		switch v := e.(type) {
+		case eval.StringLit:
+			return PutStrer(v, w)
+		default:
+			panic("Can only print string")
+		}
+	})
+}
+
+func GetLine(r io.Reader) Builtin {
+	return Builtin(func(e eval.Expr) eval.Expr {
+		var line string
+		fmt.Fscan(r, &line)
+		return e.Apply(eval.StringLit{line})
+	})
+}
+
+func Insert(expr eval.Expr, funcs map[string]eval.Expr) eval.Expr {
+	for key, value := range funcs {
+		expr = eval.Substitute(expr, key, value)
 	}
-})
+	return expr
+}
 
-
-var GetLine = Builtin(func(e eval.Expr) eval.Expr {
-	var line string
-	fmt.Scan(&line)
-	return e.Apply(eval.StringLit{line})
-})
-
-func IOPrepare(expr eval.Expr) eval.Expr {
-	return eval.Substitute(eval.Substitute(expr, "PutStr", PutStr), "GetLine", GetLine)
+func IOPrepare(expr eval.Expr, options Options) eval.Expr {
+	return Insert(expr, map[string]eval.Expr{
+		"PutStr": PutStr(options.Writer),
+		"GetLine": GetLine(options.Reader),
+	})
 }

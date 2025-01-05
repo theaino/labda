@@ -1,8 +1,14 @@
 package std
 
 import (
+	"io"
 	"labda/eval"
 )
+
+type Options struct {
+	Writer io.Writer
+	Reader io.Reader
+}
 
 type Builtin func(eval.Expr) eval.Expr
 
@@ -14,6 +20,6 @@ func (b Builtin) Apply(argument eval.Expr) eval.Expr {
 	return b(argument)
 }
 
-func Prepare(expr eval.Expr) eval.Expr {
-	return IOPrepare(expr)
+func (o Options) Prepare(expr eval.Expr) eval.Expr {
+	return IOPrepare(expr, o)
 }

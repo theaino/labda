@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"labda/analysis"
+	"labda/eval"
 	"labda/std"
 	"log"
 	"os"
@@ -10,6 +11,22 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+
+func DefaultStd() std.Options {
+	return std.Options{
+		Writer: os.Stdout,
+		Reader: os.Stdin,
+	}
+}
+
+func Pre(data string) eval.Expr {
+	tokens := analysis.Lex(string(data))
+	return DefaultStd().Prepare(analysis.Parse(tokens))
+}
+
+func Run(expr eval.Expr) {
+	expr.Reduce()
+}
 
 func main() {
 	cmd := &cli.Command{
@@ -20,9 +37,8 @@ func main() {
 			if err != nil {
 				return err
 			}
-			tokens := analysis.Lex(string(data))
-			expr := std.Prepare(analysis.Parse(tokens))
-			expr = expr.Reduce()
+			Run(Pre(string(data)))
+
 			return nil
 		},
 	}
