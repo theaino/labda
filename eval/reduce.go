@@ -11,7 +11,7 @@ func Collapse(expr ana.Expr) ana.Expr {
 		argument := Collapse(v.Argument)
 		switch b := body.(type) {
 		case ana.Abstraction:
-			return Substitute(b.Term, b.Variable, argument)
+			return Collapse(substitute(b.Term, b.Variable, argument))
 		default:
 			return ana.Application{Body: body, Argument: argument}
 		}
@@ -20,15 +20,15 @@ func Collapse(expr ana.Expr) ana.Expr {
 	}
 }
 
-func Substitute(expr ana.Expr, variable string, value ana.Expr) ana.Expr {
+func substitute(expr ana.Expr, variable string, value ana.Expr) ana.Expr {
 	switch v := expr.(type) {
 	case ana.Application:
-		return ana.Application{Body: Substitute(v.Body, variable, value), Argument: v.Argument}
+		return ana.Application{Body: substitute(v.Body, variable, value), Argument: v.Argument}
 	case ana.Abstraction:
 		if v.Variable == variable {
 			return v
 		} else {
-			return ana.Abstraction{Variable: v.Variable, Term: Substitute(v.Term, variable, value)}
+			return ana.Abstraction{Variable: v.Variable, Term: substitute(v.Term, variable, value)}
 		}
 	case ana.Variable:
 		if v.Name == variable {
