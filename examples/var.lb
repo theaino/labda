@@ -1,0 +1,9 @@
+$greetStart = "Hello, " )
+$greetEnd = "!\n" )
+$prompt = "Name: " )
+
+PutStr prompt |
+GetLine $name
+PutStr greetStart |
+PutStr name |
+PutStr greetEnd |

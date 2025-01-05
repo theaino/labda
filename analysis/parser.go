@@ -57,8 +57,14 @@ func parseLambda(tokens []Token) (eval.Expr, int) {
 	case Word:
 		variable = string(v)
 	default:
-		panic(fmt.Sprintf("Expected Word, got %v", v))
+		panic(fmt.Sprintf("Expected Word or Equal, got %T", tokens[0]))
 	}
-	expr, offset := parseParen(tokens[1:])
-	return eval.Abstraction{variable, expr}, offset + 1
+	if tokens[1] == Equal {
+		value, valueOffset := parseParen(tokens[2:])
+		expr, offset := parseParen(tokens[valueOffset+2:])
+		return eval.Application{eval.Abstraction{variable, expr}, value}, valueOffset + offset + 2
+	} else {
+		expr, offset := parseParen(tokens[1:])
+		return eval.Abstraction{variable, expr}, offset + 1
+	}
 }
