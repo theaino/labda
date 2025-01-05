@@ -13,9 +13,10 @@ const (
 	Lambda Single =  '$'
 	LParen Single = '('
 	RParen Single = ')'
+	Bar Single = '|'
 )
 
-var Singles = []Single{Lambda, LParen, RParen}
+var Singles = []Single{Lambda, LParen, RParen, Bar}
 
 type Word string
 type String string

@@ -18,13 +18,23 @@ func parseParen(tokens []Token) (eval.Expr, int) {
 		var offset int
 		switch v := token.(type) {
 		case Single:
+			getTrail := func(parseFn func(tokens []Token) (eval.Expr, int)) {
+				if idx + 1 == len(tokens) {
+					expr = eval.Identity
+				} else {
+					expr, offset = parseFn(tokens[idx+1:])
+				}
+			}
 			switch v {
 			case LParen:
-				expr, offset = parseParen(tokens[idx+1:])
+				getTrail(parseParen)
 			case RParen:
 				return currentExpr, idx + 1
+			case Bar:
+				getTrail(parseParen)
+				expr = eval.Abstraction{"", expr}
 			case Lambda:
-				expr, offset = parseLambda(tokens[idx+1:])
+				getTrail(parseLambda)
 			}
 			idx += offset
 		case Word:

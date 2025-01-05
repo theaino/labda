@@ -1,0 +1,5 @@
+PutStr "Name: " |
+GetLine ($s
+PutStr "Hello, " |
+PutStr s |
+PutStr "!\n" $
