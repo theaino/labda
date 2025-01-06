@@ -29,6 +29,10 @@ type StringLit struct {
 	Value string
 }
 
+type NumberLit struct {
+	Value int
+}
+
 var Identity = Abstraction{"x", Variable{"x"}}
 
 func (a Abstraction) String() string {
@@ -45,4 +49,8 @@ func (v Variable) String() string {
 
 func (s StringLit) String() string {
 	return strconv.Quote(s.Value)
+}
+
+func (n NumberLit) String() string {
+	return strconv.Itoa(n.Value)
 }

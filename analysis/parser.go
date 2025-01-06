@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"labda/eval"
+	"strconv"
 )
 
 func Parse(tokens []Token) eval.Expr {
@@ -19,6 +20,12 @@ func parseBlock(tokens []Token, stopToken Token) (oldExpr eval.Expr, end int) {
 			expr = eval.Variable{Name: string(token)}
 		case String:
 			expr = eval.StringLit{Value: string(token)}
+		case Number:
+			num, err := strconv.Atoi(string(token))
+			if err != nil {
+				panic(err)
+			}
+			expr = eval.NumberLit{Value: num}
 		case Single:
 			switch token {
 			case LParen:

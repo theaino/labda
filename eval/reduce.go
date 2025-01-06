@@ -48,6 +48,15 @@ func (s StringLit) Apply(argument Expr) Expr {
 }
 
 
+func (n NumberLit) Reduce() Expr {
+	return n
+}
+
+func (n NumberLit) Apply(argument Expr) Expr {
+	return nil
+}
+
+
 func Substitute(expr Expr, variable string, value Expr) Expr {
 	switch v := expr.(type) {
 	case Application:

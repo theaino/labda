@@ -1,0 +1,14 @@
+$Y = $f.($x.f(x x))($x.f(x x)).
+
+$fac = (Y $recur.$n.
+
+Eq n 0 (
+1
+) (
+* n (recur (- n 1))
+)
+
+).
+
+Print (fac 5) ()
+Print "\n" ()

@@ -6,8 +6,8 @@ import (
 )
 
 func TestParseTrivial(t *testing.T) {
-	tokens := []Token{Lambda, Word("x"), Dot, Word("a"), Word("x")}
-	want := eval.Abstraction{Variable: "x", Term: eval.Application{Body: eval.Variable{Name: "a"}, Argument: eval.Variable{Name: "x"}}}
+	tokens := []Token{Lambda, Word("x"), Dot, Word("a2"), Word("x")}
+	want := eval.Abstraction{Variable: "x", Term: eval.Application{Body: eval.Variable{Name: "a2"}, Argument: eval.Variable{Name: "x"}}}
 	got := Parse(tokens)
 	if want != got {
 		t.Fatalf("Wanted: %v, got: %v", want, got)
@@ -24,8 +24,8 @@ func TestParseComplex(t *testing.T) {
 }
 
 func TestParseChain(t *testing.T) {
-	tokens := []Token{Word("abs"), Word("1"), Word("2"), Word("3")}
-	want := eval.Application{Body: eval.Application{Body: eval.Application{Body: eval.Variable{Name: "abs"}, Argument: eval.Variable{Name: "1"}}, Argument: eval.Variable{Name: "2"}}, Argument: eval.Variable{Name: "3"}}
+	tokens := []Token{Word("abs"), Number("1"), Number("2"), Number("3")}
+	want := eval.Application{Body: eval.Application{Body: eval.Application{Body: eval.Variable{Name: "abs"}, Argument: eval.NumberLit{Value: 1}}, Argument: eval.NumberLit{Value: 2}}, Argument: eval.NumberLit{Value: 3}}
 	got := Parse(tokens)
 	if want != got {
 		t.Fatalf("Wanted: %v, got: %v", want, got)
