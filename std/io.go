@@ -6,25 +6,27 @@ import (
 	"labda/eval"
 )
 
-func PutStrer(s eval.StringLit, w io.Writer) Builtin {
-	return Builtin(func(e eval.Expr) eval.Expr {
-		fmt.Printf("%s", s.Value)
+func Printer(s string, w io.Writer) BuiltinExpr {
+	expr := Builtin(func(e eval.Expr) eval.Expr {
+		fmt.Printf("%s", s)
 		return e.Apply(eval.Identity)
 	})
+	expr.Name = fmt.Sprintf("Printer{%v}", s)
+	return expr
 }
 
-func PutStr(w io.Writer) Builtin {
+func Print(w io.Writer) BuiltinExpr {
 	return Builtin(func(e eval.Expr) eval.Expr {
-		switch v := e.(type) {
+		switch v := e.Reduce().(type) {
 		case eval.StringLit:
-			return PutStrer(v, w)
+			return Printer(v.Value, w)
 		default:
-			panic("Can only print string")
+			return Printer(v.String(), w)
 		}
 	})
 }
 
-func GetLine(r io.Reader) Builtin {
+func Input(r io.Reader) BuiltinExpr {
 	return Builtin(func(e eval.Expr) eval.Expr {
 		var line string
 		fmt.Fscan(r, &line)
@@ -32,16 +34,9 @@ func GetLine(r io.Reader) Builtin {
 	})
 }
 
-func Insert(expr eval.Expr, funcs map[string]eval.Expr) eval.Expr {
-	for key, value := range funcs {
-		expr = eval.Substitute(expr, key, value)
-	}
-	return expr
-}
-
-func IOPrepare(expr eval.Expr, options Options) eval.Expr {
-	return Insert(expr, map[string]eval.Expr{
-		"PutStr": PutStr(options.Writer),
-		"GetLine": GetLine(options.Reader),
+func init() {
+	Preparers = append(Preparers, func(options Options) {
+		BuiltinMap["Print"] = Print(options.Writer)
+		BuiltinMap["Input"] = Input(options.Reader)
 	})
 }

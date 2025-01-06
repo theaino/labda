@@ -11,13 +11,14 @@ type Token interface {
 type Single rune
 const (
 	Lambda Single =  '$'
+	Dot Single = '.'
 	LParen Single = '('
 	RParen Single = ')'
 	Bar Single = '|'
 	Equal Single = '='
 )
 
-var Singles = []Single{Lambda, LParen, RParen, Bar, Equal}
+var Singles = []Single{Lambda, Dot, LParen, RParen, Bar, Equal}
 
 type Word string
 type String string

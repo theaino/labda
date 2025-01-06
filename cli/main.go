@@ -21,7 +21,8 @@ func DefaultStd() std.Options {
 
 func Pre(data string) eval.Expr {
 	tokens := analysis.Lex(string(data))
-	return DefaultStd().Prepare(analysis.Parse(tokens))
+	expr := DefaultStd().Prepare(analysis.Parse(tokens))
+	return expr
 }
 
 func Run(expr eval.Expr) {
@@ -38,6 +39,7 @@ func main() {
 				return err
 			}
 			Run(Pre(string(data)))
+
 
 			return nil
 		},

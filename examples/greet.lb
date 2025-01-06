@@ -1,5 +1,5 @@
-PutStr "Name: " |
-GetLine ($s
-PutStr "Hello, " |
-PutStr s |
-PutStr "!\n" $
+Print "Name: " |
+Input ($s.
+Print "Hello, " |
+Print s |
+Print "!\n" ()

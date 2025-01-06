@@ -1,0 +1,14 @@
+$Y = $f.($x.f(x x))($x.f(x x)).
+
+Y $loop.
+Print ">> " |
+Input $prompt.
+Eq prompt "quit" (
+Print "Bye\n" ()
+) (
+Print prompt |
+Print "\n" |
+loop ()
+)
+)
+

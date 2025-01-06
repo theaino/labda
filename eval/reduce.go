@@ -1,7 +1,7 @@
 package eval
 
 func apply(body, argument Expr) Expr {
-	return Application{Body: body.Reduce(), Argument: argument.Reduce()}
+	return Application{Body: body, Argument: argument}
 }
 
 func (a Abstraction) Reduce() Expr {
@@ -9,16 +9,24 @@ func (a Abstraction) Reduce() Expr {
 }
 
 func (a Abstraction) Apply(argument Expr) Expr {
-	return Substitute(a.Term, a.Variable, argument).Reduce()
+	return Substitute(a.Term, a.Variable, argument)
 }
 
 
 func (a Application) Reduce() Expr {
-	return a.Body.Reduce().Apply(a.Argument.Reduce())
+	body := a.Body.Reduce()
+	argument := a.Argument
+	expr := body.Apply(argument)
+	if expr == nil {
+		expr = Application{body, argument}
+	} else {
+		expr = expr.Reduce()
+	}
+	return expr
 }
 
 func (a Application) Apply(argument Expr) Expr {
-	return apply(a, argument)
+	return nil
 }
 
 
@@ -27,7 +35,7 @@ func (v Variable) Reduce() Expr {
 }
 
 func (v Variable) Apply(argument Expr) Expr {
-	return apply(v, argument)
+	return nil
 }
 
 
@@ -36,7 +44,7 @@ func (s StringLit) Reduce() Expr {
 }
 
 func (s StringLit) Apply(argument Expr) Expr {
-	return apply(s, argument)
+	return nil
 }
 
 

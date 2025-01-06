@@ -8,6 +8,7 @@ import (
 type Expr interface {
 	Reduce() Expr
 	Apply(Expr) Expr
+	String() string
 }
 
 type Abstraction struct {
@@ -31,7 +32,7 @@ type StringLit struct {
 var Identity = Abstraction{"x", Variable{"x"}}
 
 func (a Abstraction) String() string {
-	return fmt.Sprintf("($%v %v)", a.Variable, a.Term)
+	return fmt.Sprintf("($%v.%v)", a.Variable, a.Term)
 }
 
 func (a Application) String() string {

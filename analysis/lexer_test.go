@@ -32,7 +32,7 @@ func TestLexComplex(t *testing.T) {
 
 func TestLexString(t *testing.T) {
 	body := "\"hello\" 1 .$'a'"
-	want := []Token{String("hello"), Word("1"), Word("."), Lambda, String("a")}
+	want := []Token{String("hello"), Word("1"), Dot, Lambda, String("a")}
 	got := Lex(body)
 	for idx, wantedToken := range want {
 		gotToken := got[idx]

@@ -1,70 +1,86 @@
 package analysis
 
 import (
-	"fmt"
 	"labda/eval"
 )
 
 func Parse(tokens []Token) eval.Expr {
-	expr, _ := parseParen(tokens)
+	expr, _ := parseBlock(tokens, nil)
 	return expr
 }
 
-func parseParen(tokens []Token) (eval.Expr, int) {
-	var currentExpr eval.Expr
-	for idx := 0; idx < len(tokens); idx++ {
-		token := tokens[idx]
+func parseBlock(tokens []Token, stopToken Token) (oldExpr eval.Expr, end int) {
+	oldExpr = eval.Identity
+
+	for end = 0; end < len(tokens); end++ {
 		var expr eval.Expr
-		var offset int
-		switch v := token.(type) {
-		case Single:
-			getTrail := func(parseFn func(tokens []Token) (eval.Expr, int)) {
-				if idx + 1 == len(tokens) {
-					expr = eval.Identity
-				} else {
-					expr, offset = parseFn(tokens[idx+1:])
-				}
-			}
-			switch v {
-			case LParen:
-				getTrail(parseParen)
-			case RParen:
-				return currentExpr, idx + 1
-			case Bar:
-				getTrail(parseParen)
-				expr = eval.Abstraction{"", expr}
-			case Lambda:
-				getTrail(parseLambda)
-			}
-			idx += offset
+		switch token := tokens[end].(type) {
 		case Word:
-			expr = eval.Variable{string(v)}
+			expr = eval.Variable{Name: string(token)}
 		case String:
-			expr = eval.StringLit{string(v)}
+			expr = eval.StringLit{Value: string(token)}
+		case Single:
+			switch token {
+			case LParen:
+				var offset int
+				expr, offset = parseBlock(tokens[end+1:], RParen)
+				end += offset
+			case RParen:
+				if stopToken == RParen {
+					end++
+				}
+				return
+			case Bar:
+				var offset int
+				expr, offset = parseBlock(tokens[end+1:], RParen)
+				end += offset
+				expr = eval.Abstraction{Variable: "", Term: expr}
+			case Lambda:
+				var offset int
+				expr, offset = parseLambda(tokens[end+1:])
+				end += offset
+			case Dot:
+				if stopToken == Dot {
+					end++
+				}
+				return
+			default:
+				panic("Not implemented!")
+			}
+		default:
+			panic("Not implemented!")
 		}
-		if currentExpr == nil {
-			currentExpr = expr
+		if oldExpr == eval.Identity {
+			oldExpr = expr
 		} else {
-			currentExpr = eval.Application{currentExpr, expr}
+			oldExpr = eval.Application{Body: oldExpr, Argument: expr}
 		}
 	}
-	return currentExpr, len(tokens)
+
+	return
 }
 
 func parseLambda(tokens []Token) (eval.Expr, int) {
-	var variable string
-	switch v := tokens[0].(type) {
+	var name string
+	switch token := tokens[0].(type) {
 	case Word:
-		variable = string(v)
+		name = string(token)
 	default:
-		panic(fmt.Sprintf("Expected Word or Equal, got %T", tokens[0]))
+		panic("Expected variable name")
 	}
-	if tokens[1] == Equal {
-		value, valueOffset := parseParen(tokens[2:])
-		expr, offset := parseParen(tokens[valueOffset+2:])
-		return eval.Application{eval.Abstraction{variable, expr}, value}, valueOffset + offset + 2
-	} else {
-		expr, offset := parseParen(tokens[1:])
-		return eval.Abstraction{variable, expr}, offset + 1
+
+	switch tokens[1] {
+	case Dot:
+		term, offset := parseBlock(tokens[2:], nil)
+		return eval.Abstraction{Variable: name, Term: term}, offset + 2
+	case Equal:
+		value, valueOffset := parseBlock(tokens[2:], Dot)
+		offset := valueOffset + 2
+		body, bodyOffset := parseBlock(tokens[offset:], nil)
+		offset += bodyOffset
+		// return eval.Substitute(body, name, value), offset
+		return eval.Application{Body: eval.Abstraction{Variable: name, Term: body}, Argument: value}, offset
+	default:
+		panic("Expected Dot or Equal")
 	}
 }
