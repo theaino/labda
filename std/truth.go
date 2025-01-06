@@ -18,13 +18,17 @@ var False = Builtin(func(_ eval.Expr) eval.Expr {
 
 var Eq = Builtin(func(a eval.Expr) eval.Expr {
 	return Builtin(func(b eval.Expr) eval.Expr {
-		if a.Reduce() == b.Reduce() {
-			return True
-		} else {
-			return False
-		}
+		return truth(a.Reduce() == b.Reduce())
 	})
 })
+
+func truth(b bool) eval.Expr {
+	if b {
+		return BuiltinMap["True"]
+	} else {
+		return BuiltinMap["False"]
+	}
+}
 
 func init() {
 	Preparers = append(Preparers, func(options Options) {

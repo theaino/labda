@@ -43,6 +43,7 @@ func (o Options) Prepare(expr eval.Expr) eval.Expr {
 func Insert(expr eval.Expr) eval.Expr {
 	for key, value := range BuiltinMap {
 		value.Name = key
+		BuiltinMap[key] = value
 		expr = eval.Substitute(expr, key, value)
 	}
 	return expr
