@@ -1,9 +1,0 @@
-$mod.
-
-$true = $a.$b.a.
-$false = $a.$b.b.
-
-$&& = $a.$b.a (b true false) false.
-$|| = $a.$b.a true (b true false).
-
-mod
