@@ -18,7 +18,7 @@ var False = Builtin(func(_ eval.Expr) eval.Expr {
 
 var Eq = Builtin(func(a eval.Expr) eval.Expr {
 	return Builtin(func(b eval.Expr) eval.Expr {
-		return truth(a.Reduce() == b.Reduce())
+		return truth(a.Reduce().Compare(b.Reduce()))
 	})
 })
 

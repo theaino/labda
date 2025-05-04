@@ -30,7 +30,11 @@ func (b BuiltinExpr) Reduce() eval.Expr {
 }
 
 func (b BuiltinExpr) Apply(argument eval.Expr) eval.Expr {
-	return b.Handler(argument)
+	handler := b.Handler
+	if e, ok := BuiltinMap[b.Name]; ok {
+		handler = e.Handler
+	}
+	return handler(argument)
 }
 
 func (o Options) Prepare(expr eval.Expr) eval.Expr {
@@ -51,4 +55,11 @@ func Insert(expr eval.Expr) eval.Expr {
 
 func (b BuiltinExpr) String() string {
 	return b.Name
+}
+
+func (b BuiltinExpr) Compare(expr eval.Expr) bool {
+	if v, ok := expr.(*BuiltinExpr); ok {
+		return b.Name == v.Name
+	}
+	return false
 }

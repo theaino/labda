@@ -1,0 +1,12 @@
+$Y = $f.($x.f(x x))($x.f(x x)).
+
+(Y $loop.$i.
+
+Print i ()
+Print "\n" ()
+
+Eq i 0 () (
+loop (- i 1)
+)
+
+) (10000)

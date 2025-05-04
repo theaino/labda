@@ -5,11 +5,11 @@ import "labda/eval"
 func BinaryOp(op func(int, int) int) BuiltinExpr {
 	return Builtin(func(aExpr eval.Expr) eval.Expr {
 		switch a := aExpr.Reduce().(type) {
-		case eval.NumberLit:
+		case *eval.NumberLit:
 			return Builtin(func(bExpr eval.Expr) eval.Expr {
 				switch b := bExpr.Reduce().(type) {
-				case eval.NumberLit:
-					return eval.NumberLit{Value: op(a.Value, b.Value)}
+				case *eval.NumberLit:
+					return &eval.NumberLit{Value: op(a.Value, b.Value)}
 				default:
 					panic("Operation only supports numbers")
 				}

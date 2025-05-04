@@ -17,15 +17,15 @@ func parseBlock(tokens []Token, stopToken Token) (oldExpr eval.Expr, end int) {
 		var expr eval.Expr
 		switch token := tokens[end].(type) {
 		case Word:
-			expr = eval.Variable{Name: string(token)}
+			expr = &eval.Variable{Name: string(token)}
 		case String:
-			expr = eval.StringLit{Value: string(token)}
+			expr = &eval.StringLit{Value: string(token)}
 		case Number:
 			num, err := strconv.Atoi(string(token))
 			if err != nil {
 				panic(err)
 			}
-			expr = eval.NumberLit{Value: num}
+			expr = &eval.NumberLit{Value: num}
 		case Single:
 			switch token {
 			case LParen:
@@ -41,7 +41,7 @@ func parseBlock(tokens []Token, stopToken Token) (oldExpr eval.Expr, end int) {
 				var offset int
 				expr, offset = parseBlock(tokens[end+1:], RParen)
 				end += offset
-				expr = eval.Abstraction{Variable: "", Term: expr}
+				expr = &eval.Abstraction{Variable: "", Term: expr}
 			case Lambda:
 				var offset int
 				expr, offset = parseLambda(tokens[end+1:])
@@ -60,7 +60,7 @@ func parseBlock(tokens []Token, stopToken Token) (oldExpr eval.Expr, end int) {
 		if oldExpr == eval.Identity {
 			oldExpr = expr
 		} else {
-			oldExpr = eval.Application{Body: oldExpr, Argument: expr}
+			oldExpr = &eval.Application{Body: oldExpr, Argument: expr}
 		}
 	}
 
@@ -79,14 +79,14 @@ func parseLambda(tokens []Token) (eval.Expr, int) {
 	switch tokens[1] {
 	case Dot:
 		term, offset := parseBlock(tokens[2:], nil)
-		return eval.Abstraction{Variable: name, Term: term}, offset + 2
+		return &eval.Abstraction{Variable: name, Term: term}, offset + 2
 	case Equal:
 		value, valueOffset := parseBlock(tokens[2:], Dot)
 		offset := valueOffset + 2
 		body, bodyOffset := parseBlock(tokens[offset:], nil)
 		offset += bodyOffset
 		// return eval.Substitute(body, name, value), offset
-		return eval.Application{Body: eval.Abstraction{Variable: name, Term: body}, Argument: value}, offset
+		return &eval.Application{Body: &eval.Abstraction{Variable: name, Term: body}, Argument: value}, offset
 	default:
 		panic("Expected Dot or Equal")
 	}
